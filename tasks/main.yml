@@ -2,14 +2,18 @@
 # tasks file for nginx
   - name: Install Nginx
     ansible.builtin.dnf:
-      name: nginx
+      name: "{{ item }}"
       state: present
+    with_items:
+      - "{{ package }}"
 
   - name: Start The Nginx
     ansible.builtin.service:
-      name: nginx
+      name: "{{ item }}"
       state: started
       enabled: yes
+    with_items:
+      - "{{ package }}"
 
   - name: copy the index.html file into webserver
     ansible.builtin.copy:
@@ -20,6 +24,4 @@
     ansible.builtin.template:
       src: nginx.conf.j2
       dest: /etc/nginx/nginx.conf
-    vars:
-      port: 60
     notify: Restart nginx
